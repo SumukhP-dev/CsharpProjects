@@ -27,7 +27,16 @@ int food = 0;
 InitializeGame();
 while (!shouldExit)
 {
-    Move();
+    if (TerminalResized())
+    {
+        shouldExit = true;
+        Console.Clear();
+        Console.WriteLine("Console was resized. Program exiting.");
+    }
+    else
+    {
+        Move(true);
+    }
 }
 
 // Returns true if the Terminal was resized 
@@ -51,23 +60,26 @@ void ShowFood()
     Console.Write(foods[food]);
 }
 
+
 // Changes the player to match the food consumed
 void ChangePlayer()
 {
     player = states[food];
-    Console.SetCursorPosition(playerX, playerY);
     Console.Write(player);
+    Console.SetCursorPosition(playerX, playerY);
 }
 
+/*
 // Temporarily stops the player from moving
 void FreezePlayer()
 {
     System.Threading.Thread.Sleep(1000);
     player = states[0];
 }
+*/
 
 // Reads directional input from the Console and moves the player
-void Move()
+void Move(bool checkForNondirectionalKeyInput = false)
 {
     int lastX = playerX;
     int lastY = playerY;
@@ -88,6 +100,15 @@ void Move()
             break;
         case ConsoleKey.Escape:
             shouldExit = true;
+            break;
+        default:
+            if (checkForNondirectionalKeyInput)
+            {
+                shouldExit = true;
+                Console.Clear();
+                Console.WriteLine("Nondirectional key input detected. Program exiting.");
+                return;
+            }
             break;
     }
 
