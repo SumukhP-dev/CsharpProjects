@@ -24,6 +24,9 @@ string player = states[0];
 // Index of the current food
 int food = 0;
 
+// Speed of Player
+int speed = 0;
+
 InitializeGame();
 while (!shouldExit)
 {
@@ -36,6 +39,70 @@ while (!shouldExit)
     else
     {
         Move(true);
+    }
+}
+
+// Clears the console, displays the food and player
+void InitializeGame()
+{
+    Console.Clear();
+    ShowFood();
+    Console.SetCursorPosition(0, 0);
+    Console.Write(player);
+}
+
+// Reads directional input from the Console and moves the player
+void Move(bool checkForNondirectionalKeyInput = false)
+{
+    int lastX = playerX;
+    int lastY = playerY;
+
+    switch (Console.ReadKey(true).Key)
+    {
+        case ConsoleKey.UpArrow:
+            playerY--;
+            break;
+        case ConsoleKey.DownArrow:
+            playerY++;
+            break;
+        case ConsoleKey.LeftArrow:
+            playerX = playerX - 1 - speed;
+            break;
+        case ConsoleKey.RightArrow:
+            playerX = playerX + 1 + speed;
+            break;
+        case ConsoleKey.Escape:
+            shouldExit = true;
+            break;
+        default:
+            if (checkForNondirectionalKeyInput)
+            {
+                shouldExit = true;
+                Console.Clear();
+                Console.WriteLine("Nondirectional key input detected. Program exiting.");
+                return;
+            }
+            break;
+    }
+
+    // Clear the characters at the previous position
+    RemovePlayer(lastX, lastY);
+
+    // Keep player position within the bounds of the Terminal window
+    playerX = (playerX < 0) ? 0 : (playerX >= width ? width : playerX);
+    playerY = (playerY < 0) ? 0 : (playerY >= height ? height : playerY);
+
+    if (CheckPlayerAndFoodOverlap())
+    {
+        ChangePlayer();
+        ShowFood();
+        CheckToFreezePlayer();
+    }
+    else
+    {
+        // Draw the player at the new location
+        Console.SetCursorPosition(playerX, playerY);
+        Console.Write(player);
     }
 }
 
@@ -88,83 +155,37 @@ void ChangePlayer()
     RemovePlayer(playerX, playerY);
 
     player = states[food];
+    ChangeSpeed(true);
+
     Console.SetCursorPosition(playerX, playerY);
     Console.Write(player);
 }
 
-/*
+
 // Temporarily stops the player from moving
 void FreezePlayer()
 {
     System.Threading.Thread.Sleep(1000);
     player = states[0];
 }
-*/
 
-// Reads directional input from the Console and moves the player
-void Move(bool checkForNondirectionalKeyInput = false)
+// Changes the speed based on the player's state
+void ChangeSpeed(bool active)
 {
-    int lastX = playerX;
-    int lastY = playerY;
-
-    switch (Console.ReadKey(true).Key)
+    if (active)
     {
-        case ConsoleKey.UpArrow:
-            playerY--;
-            break;
-        case ConsoleKey.DownArrow:
-            playerY++;
-            break;
-        case ConsoleKey.LeftArrow:
-            playerX--;
-            break;
-        case ConsoleKey.RightArrow:
-            playerX++;
-            break;
-        case ConsoleKey.Escape:
-            shouldExit = true;
-            break;
-        default:
-            if (checkForNondirectionalKeyInput)
-            {
-                shouldExit = true;
-                Console.Clear();
-                Console.WriteLine("Nondirectional key input detected. Program exiting.");
-                return;
-            }
-            break;
-    }
-
-    // Clear the characters at the previous position
-    RemovePlayer(lastX, lastY);
-
-    // Keep player position within the bounds of the Terminal window
-    playerX = (playerX < 0) ? 0 : (playerX >= width ? width : playerX);
-    playerY = (playerY < 0) ? 0 : (playerY >= height ? height : playerY);
-
-    if (checkPlayerAndFoodOverlap())
-    {
-        ChangePlayer();
-        ShowFood();
-    }
-    else
-    {
-        // Draw the player at the new location
-        Console.SetCursorPosition(playerX, playerY);
-        Console.Write(player);
+        if (player == "(^-^)")
+        {
+            speed += 3;
+        }
+        else
+        {
+            speed = 0;
+        }
     }
 }
 
-// Clears the console, displays the food and player
-void InitializeGame()
-{
-    Console.Clear();
-    ShowFood();
-    Console.SetCursorPosition(0, 0);
-    Console.Write(player);
-}
-
-bool checkPlayerAndFoodOverlap()
+bool CheckPlayerAndFoodOverlap()
 {
     bool leftColumnCollision = ((playerX + 5) >= foodX);
     bool rightColumnCollision = (playerX <= (foodX + 5));
@@ -180,4 +201,14 @@ bool checkPlayerAndFoodOverlap()
     {
         return false;
     }
+}
+
+bool CheckToFreezePlayer()
+{
+    if (player == "(X_X)")
+    {
+        FreezePlayer();
+        return true;
+    }
+    return false;
 }
