@@ -48,6 +48,8 @@ bool TerminalResized()
 // Displays random food at a random location
 void ShowFood()
 {
+    RemoveFood();
+
     // Update food to a random index
     food = random.Next(0, foods.Length);
 
@@ -60,13 +62,34 @@ void ShowFood()
     Console.Write(foods[food]);
 }
 
+// Removes the food string from the console
+void RemoveFood()
+{
+    Console.SetCursorPosition(foodX, foodY);
+    for (int i = 0; i < foods[food].Length; i++)
+    {
+        Console.Write(" ");
+    }
+}
+
+// Clear the characters at the previous position
+void RemovePlayer(int lastX, int lastY)
+{
+    Console.SetCursorPosition(lastX, lastY);
+    for (int i = 0; i < player.Length; i++)
+    {
+        Console.Write(" ");
+    }
+}
 
 // Changes the player to match the food consumed
 void ChangePlayer()
 {
+    RemovePlayer(playerX, playerY);
+
     player = states[food];
-    Console.Write(player);
     Console.SetCursorPosition(playerX, playerY);
+    Console.Write(player);
 }
 
 /*
@@ -113,19 +136,23 @@ void Move(bool checkForNondirectionalKeyInput = false)
     }
 
     // Clear the characters at the previous position
-    Console.SetCursorPosition(lastX, lastY);
-    for (int i = 0; i < player.Length; i++)
-    {
-        Console.Write(" ");
-    }
+    RemovePlayer(lastX, lastY);
 
     // Keep player position within the bounds of the Terminal window
     playerX = (playerX < 0) ? 0 : (playerX >= width ? width : playerX);
     playerY = (playerY < 0) ? 0 : (playerY >= height ? height : playerY);
 
-    // Draw the player at the new location
-    Console.SetCursorPosition(playerX, playerY);
-    Console.Write(player);
+    if (checkPlayerAndFoodOverlap())
+    {
+        ChangePlayer();
+        ShowFood();
+    }
+    else
+    {
+        // Draw the player at the new location
+        Console.SetCursorPosition(playerX, playerY);
+        Console.Write(player);
+    }
 }
 
 // Clears the console, displays the food and player
@@ -135,4 +162,22 @@ void InitializeGame()
     ShowFood();
     Console.SetCursorPosition(0, 0);
     Console.Write(player);
+}
+
+bool checkPlayerAndFoodOverlap()
+{
+    bool leftColumnCollision = ((playerX + 5) >= foodX);
+    bool rightColumnCollision = (playerX <= (foodX + 5));
+    bool topColumnCollision = ((playerY + 1) >= foodY);
+    bool bottomColumnCollision = (playerY <= (foodY + 1));
+
+    if (leftColumnCollision && rightColumnCollision
+    && topColumnCollision && bottomColumnCollision)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
