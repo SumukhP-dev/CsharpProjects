@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\sumuk\\CsharpProjects\\TestProject\\TestProject.csproj",
-      "projectName": "TestProject",
-      "projectPath": "C:\\Users\\sumuk\\CsharpProjects\\TestProject\\TestProject.csproj",
+      "projectUniqueName": "C:\\Users\\sumuk\\OneDrive - Georgia Institute of Technology\\Projects\\C#_command_line_game\\Fruit_Hunter_Command_Line_Game\\FruitHunter\\FruitHunter.csproj",
+      "projectName": "FruitHunter",
+      "projectPath": "C:\\Users\\sumuk\\OneDrive - Georgia Institute of Technology\\Projects\\C#_command_line_game\\Fruit_Hunter_Command_Line_Game\\FruitHunter\\FruitHunter.csproj",
       "packagesPath": "C:\\Users\\sumuk\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\sumuk\\CsharpProjects\\TestProject\\obj\\",
+      "outputPath": "C:\\Users\\sumuk\\OneDrive - Georgia Institute of Technology\\Projects\\C#_command_line_game\\Fruit_Hunter_Command_Line_Game\\FruitHunter\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\sumuk\\AppData\\Roaming\\NuGet\\NuGet.Config"
